@@ -4,7 +4,9 @@ services:
     image: rust:latest
     container_name: web
     tty: true
+    user: root
     volumes: 
+      - ./.bashrc:/root/.bashrc
       - ./src:/home/web/src
       - ./Cargo.toml:/home/web/Cargo.toml
     working_dir: /home/web

@@ -5,3 +5,5 @@ edition = "2018"
 license = "MIT"
 
 [dependencies]
+tokio = {version = "1", features = ["full"]}
+warp = "0.3"
