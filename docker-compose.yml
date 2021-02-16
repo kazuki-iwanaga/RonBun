@@ -1,0 +1,12 @@
+version: '3'
+services: 
+  web:
+    image: rust:latest
+    container_name: web
+    tty: true
+    volumes: 
+      - ./src:/home/web/src
+      - ./Cargo.toml:/home/web/Cargo.toml
+    working_dir: /home/web
+    ports: 
+      - 8989:8989
