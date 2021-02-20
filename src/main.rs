@@ -7,6 +7,7 @@ async fn main() {
     let hello = warp::path!("hello" / String)
         .map(|name| format!("Hello, {}!", name));
 
+    println!("test3")
     println!("Server is listening on http://localhost:8989/hello/RonBun");
     
     warp::serve(hello)
