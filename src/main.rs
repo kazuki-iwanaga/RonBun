@@ -4,6 +4,7 @@ use warp::Filter;
 
 #[tokio::main]
 async fn main() {
+    println!("aa");
     let hello = warp::path!("hello" / String)
         .map(|name| format!("Hello, {}!", name));
 
