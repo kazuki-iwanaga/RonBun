@@ -2,7 +2,8 @@ version: '3'
 services:
   # Rust Application
   web:
-    image: rust:latest
+    build: ./web
+    image: web
     container_name: web
     tty: true
     user: root
@@ -12,9 +13,17 @@ services:
       - TZ=Asia/Tokyo
     volumes: 
       - ./src:/web/src
+      - ./migrations:/web/migrations
+      - ./dotenv:/web/.env
       - ./Cargo.toml:/web/Cargo.toml
       - cargo_target:/web/target
+      - ./wait-for-it.sh:/tmp/wait-for-it.sh
     working_dir: /web
+    depends_on:
+      - db
+    command: >
+      /tmp/wait-for-it.sh -t 60 db:3306
+      -- bash -c 'diesel setup && diesel migration run'
 
   # MySQL
   db:
@@ -30,8 +39,8 @@ services:
       - MYSQL_USER=dev
       - MYSQL_PASSWORD=dev
     volumes: 
-      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./db/mysql_init:/docker-entrypoint-initdb.d
+      - ./db/my.cnf:/etc/mysql/conf.d/my_config.cnf
+      # - ./db/mysql_init:/docker-entrypoint-initdb.d
 
   # phpMyAdmin
   pma:
@@ -48,6 +57,8 @@ services:
       - PMA_PASSWORD=root
     volumes:
       - /sessions
+    depends_on: 
+      - db
 
 volumes:
   # Rust Crates
