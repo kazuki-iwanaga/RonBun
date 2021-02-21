@@ -1,13 +1,56 @@
 version: '3'
-services: 
+services:
+  # Rust Application
   web:
     image: rust:latest
     container_name: web
     tty: true
     user: root
-    volumes: 
-      - ./src:/home/web/src
-      - ./Cargo.toml:/home/web/Cargo.toml
-    working_dir: /home/web
     ports: 
       - 8989:8989
+    environment: 
+      - TZ=Asia/Tokyo
+    volumes: 
+      - ./src:/web/src
+      - ./Cargo.toml:/web/Cargo.toml
+      - cargo_target:/web/target
+    working_dir: /web
+
+  # MySQL
+  db:
+    image: mysql:5.7
+    container_name: db
+    ports: 
+      - 3306:3306
+    restart: always
+    environment: 
+      - TZ=Asia/Tokyo
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=ronbun_db
+      - MYSQL_USER=dev
+      - MYSQL_PASSWORD=dev
+    volumes: 
+      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./db/mysql_init:/docker-entrypoint-initdb.d
+
+  # phpMyAdmin
+  pma:
+    image: phpmyadmin/phpmyadmin:5
+    container_name: pma
+    ports: 
+      - 8080:80
+    restart: always
+    environment: 
+      - TZ=Asia/Tokyo
+      - PMA_ARBITRARY=1
+      - PMA_HOSTS=db
+      - PMA_USER=root
+      - PMA_PASSWORD=root
+    volumes:
+      - /sessions
+
+volumes:
+  # Rust Crates
+  cargo_target:
+    driver: local
+    external: false
