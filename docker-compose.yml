@@ -13,9 +13,17 @@ services:
       - TZ=Asia/Tokyo
     volumes: 
       - ./src:/web/src
+      - ./migrations:/web/migrations
+      - ./dotenv:/web/.env
       - ./Cargo.toml:/web/Cargo.toml
       - cargo_target:/web/target
+      - ./wait-for-it.sh:/tmp/wait-for-it.sh
     working_dir: /web
+    depends_on:
+      - db
+    command: >
+      /tmp/wait-for-it.sh -t 60 db:3306
+      -- bash -c 'diesel setup && diesel migration run'
 
   # MySQL
   db:
@@ -32,7 +40,7 @@ services:
       - MYSQL_PASSWORD=dev
     volumes: 
       - ./db/my.cnf:/etc/mysql/conf.d/my_config.cnf
-      - ./db/mysql_init:/docker-entrypoint-initdb.d
+      # - ./db/mysql_init:/docker-entrypoint-initdb.d
 
   # phpMyAdmin
   pma:
@@ -49,6 +57,8 @@ services:
       - PMA_PASSWORD=root
     volumes:
       - /sessions
+    depends_on: 
+      - db
 
 volumes:
   # Rust Crates
