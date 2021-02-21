@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS `papers` (
     `paper_id`      INT(10) AUTO_INCREMENT PRIMARY KEY,
-    `paper_title`   VARCHAR(50) NOT NULL,
+    `paper_title`   VARCHAR(100) NOT NULL,
     `paper_author`  VARCHAR(50),
     `paper_year`    INT(4),
     `user_id`       INT(10),

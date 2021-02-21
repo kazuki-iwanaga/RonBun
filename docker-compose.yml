@@ -30,7 +30,7 @@ services:
       - MYSQL_USER=dev
       - MYSQL_PASSWORD=dev
     volumes: 
-      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./db/my.cnf:/etc/mysql/conf.d/my_config.cnf
       - ./db/mysql_init:/docker-entrypoint-initdb.d
 
   # phpMyAdmin
