@@ -23,7 +23,7 @@ services:
       - db
     command: >
       /tmp/wait-for-it.sh -t 60 db:3306
-      -- bash -c 'diesel setup && diesel migration run'
+      -- bash -c 'diesel setup && diesel migration run && bash'
 
   # MySQL
   db:
