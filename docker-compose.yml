@@ -2,7 +2,8 @@ version: '3'
 services:
   # Rust Application
   web:
-    image: rust:latest
+    build: ./web
+    image: web
     container_name: web
     tty: true
     user: root
