@@ -14,7 +14,7 @@ table! {
     users (user_id) {
         user_id -> Integer,
         user_name -> Varchar,
-        user_email -> Nullable<Varchar>,
+        user_email -> Varchar,
         created_at -> Datetime,
         updated_at -> Datetime,
     }

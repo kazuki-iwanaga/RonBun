@@ -12,12 +12,8 @@ async fn hello(web::Path(name): web::Path<String>) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new()
-            .service(index)
-            .service(hello)
-    })
-    .bind("0.0.0.0:8989")?
-    .run()
-    .await
+    HttpServer::new(|| App::new().service(index).service(hello))
+        .bind("0.0.0.0:8989")?
+        .run()
+        .await
 }
