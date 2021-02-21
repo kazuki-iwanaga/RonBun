@@ -1,15 +1,23 @@
-// https://github.com/seanmonstar/warp
+use actix_web::{get, web, App, HttpServer, Responder};
 
-use warp::Filter;
+#[get("/{id}/{name}")]
+async fn index(web::Path((id, name)): web::Path<(u32, String)>) -> impl Responder {
+    format!("Hello {}! id:{}", name, id)
+}
 
-#[tokio::main]
-async fn main() {
-    let hello = warp::path!("hello" / String)
-        .map(|name| format!("Hello, {}!", name));
+#[get("/{name}")]
+async fn hello(web::Path(name): web::Path<String>) -> impl Responder {
+    format!("Hello {}!", name)
+}
 
-    println!("Server is listening on http://localhost:8989/hello/RonBun");
-    
-    warp::serve(hello)
-        .run(([0, 0, 0, 0], 8989))
-        .await;
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    HttpServer::new(|| {
+        App::new()
+            .service(index)
+            .service(hello)
+    })
+    .bind("0.0.0.0:8989")?
+    .run()
+    .await
 }
