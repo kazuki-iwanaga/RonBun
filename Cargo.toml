@@ -9,3 +9,6 @@ actix-web = "3"
 diesel = { version = "1.4.4", features = ["mysql", "chrono"] }
 dotenv = "0.15.0"
 chrono = "0.4"
+
+serde = "1.0.97"
+serde_derive = "1.0.97"
