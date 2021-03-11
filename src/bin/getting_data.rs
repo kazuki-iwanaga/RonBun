@@ -5,6 +5,7 @@ extern crate serde_derive;
 
 use diesel::prelude::*;
 use ronbun::models::{NewUser, User};
+use ronbun::models::{NewPaper, Paper};
 use ronbun::schema::users as users_schema;
 use ronbun::schema::papers as papers_schema;
 use ronbun::utils::establish_connection;
@@ -15,6 +16,7 @@ async fn main() -> std::io::Result<()> {
         || App::new()
             .route("/", web::get().to(read_user))
             .route("/search", web::get().to(search))
+            .route("/register", web::get().to(register_paper))
     )
     .bind("0.0.0.0:8989")?
     .run()
@@ -55,13 +57,33 @@ async fn search(pattern: web::Query<Word>) -> impl Responder {
     let connection = establish_connection();
 
     let pattern = format!("%{}%", pattern.search);
-    let users = users_schema::dsl::users
-        .filter(users_schema::user_name.like(&pattern))
-        .load::<User>(&connection);
+    let papers = papers_schema::dsl::papers
+        .filter(papers_schema::paper_title.like(&pattern))
+        .or_filter(papers_schema::paper_author.like(&pattern))
+        .load::<Paper>(&connection);
     
-    match users {
-        Ok(u) => format!("{:#?}", u),
-        Err(e) => format!("Not found.\nError: {:?}", e),
+    match papers {
+        Ok(v) => format!("{:#?}", v),
+        Err(e) => format!("Error: {:?}", e),
     }
 }
 
+
+async fn register_paper(paper: web::Query<NewPaper>) -> impl Responder {
+    let connection = establish_connection();
+
+    let new_paper = NewPaper {
+        paper_title: paper.paper_title.clone(),
+        paper_author: paper.paper_author.clone(),
+        paper_year: paper.paper_year,
+        user_id: paper.user_id,
+    };
+
+    diesel::insert_into(papers_schema::dsl::papers)
+        .values(new_paper)
+        .execute(&connection)
+        .expect("Error saving new paper");
+    
+    format!("Success to register {:?}", paper)
+
+}
